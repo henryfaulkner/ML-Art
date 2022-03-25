@@ -1,7 +1,7 @@
 This is an experiment to examine image processing's ability to disect images to
 showcase the interplay of an image's content and its style.
 
-- As outlined in this research study: https://arxiv.org/abs/1508.06576
+- Methods implemented as outlined in this research study: https://arxiv.org/abs/1508.06576
 
 ## Dependencies
 
