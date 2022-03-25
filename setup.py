@@ -1,6 +1,6 @@
 from setuptools import setup
 
-projectName = 'src'
+projectName = 'ContentAndStyleInterplay'
 
 setup(
     name=projectName,
@@ -12,9 +12,10 @@ setup(
         ]
     },
     install_requires=[
-        tensorflow,
-        numpy,
-        matplotlib,
-        pillow
+        'tensorflow',
+        'numpy',
+        'matplotlib',
+        'pillow',
+        'IPython'
     ]
 )
