@@ -11,7 +11,7 @@ showcase the interplay of an image's content and its style.
 - tensorflow
 - IPython
 
-pip3 install tensorflow
-pip3 install pillow
-pip3 install matplotlib
-pip3 install IPython
+$pip3 install tensorflow;
+pip3 install pillow;
+pip3 install matplotlib;
+pip3 install IPython;
