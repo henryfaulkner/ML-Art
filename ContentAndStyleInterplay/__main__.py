@@ -6,7 +6,6 @@ from keras import models
 import tensorflow as tf
 import functools
 import time
-import IPython.display
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,7 +36,7 @@ def main():
                     ]
 
     best_processed_art, best_loss = run_style_transfer(
-        content_path, style_path, content_layers, style_layers, num_iterations=300)
+        content_path, style_path, content_layers, style_layers, num_iterations=650)
 
     vi.show_results(best_processed_art, content_path, style_path)
 
@@ -110,8 +109,7 @@ def run_style_transfer(content_path,
     pd = PrepareData()
     vi = VisualizeImages()
 
-    # We don't need to (or want to) train any layers of our model, so we set their
-    # trainable to false.
+    # Not training the model
     model = get_model(content_layers, style_layers)
     for layer in model.layers:
         layer.trainable = False
@@ -174,22 +172,14 @@ def run_style_transfer(content_path,
 
         if i % display_interval == 0:
             start_time = time.time()
-
-            # Use the .numpy() method to get the concrete numpy array
             plot_img = init_image.numpy()
             plot_img = pd.deprocess_img(plot_img)
-            # vi.show_results(plot_img, content_path, style_path)
-            # imgs.append(plot_img)
-            # IPython.display.clear_output(wait=True)
-            # IPython.display.display_png(Image.fromarray(plot_img))
             print('Iteration: {}'.format(i))
             print('Total loss: {:.4e}, '
                   'style loss: {:.4e}, '
                   'content loss: {:.4e}, '
                   'time: {:.4f}s'.format(loss, style_score, content_score, time.time() - start_time))
     print('Total time: {:.4f}s'.format(time.time() - global_start))
-    # IPython.display.clear_output(wait=True)
-    # plt.figure(figsize=(14, 4))
     for i, img in enumerate(imgs):
         plt.subplot(num_rows, num_cols, i+1)
         plt.imshow(img)

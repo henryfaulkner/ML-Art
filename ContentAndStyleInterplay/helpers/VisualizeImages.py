@@ -18,7 +18,7 @@ class VisualizeImages:
 
         img = kp_image.img_to_array(img)
 
-        # We need to broadcast the image array such that it has a batch dimension
+        # Need to broadcast the image array such that it has a batch dimension
         img = np.expand_dims(img, axis=0)
         return img
 
