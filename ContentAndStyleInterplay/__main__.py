@@ -1,6 +1,8 @@
-from helpers.VisualizeImages import VisualizeImages
-from helpers.PrepareData import PrepareData
-from helpers.GradientDescent import GradientDescent
+from MachineLearningProcessor.VisualizeImages import VisualizeImages
+from MachineLearningProcessor.PrepareData import PrepareData
+from MachineLearningProcessor.GradientDescent import GradientDescent
+from MetAPI.RESTCalls import RESTCalls
+from helpers.FileStructures import FileStructures
 from keras.preprocessing import image
 from keras import models
 import tensorflow as tf
@@ -10,19 +12,21 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import os
 mpl.rcParams['figure.figsize'] = (10, 10)
 mpl.rcParams['axes.grid'] = False
 
 
 def main():
     vi = VisualizeImages()
+    fs = FileStructures()
+    numIterations = input('How many processing iterations?')
+    folder_and_file_name = 'temp'  # fs.CreateFileInput()
+    fs.CreateResultFolder(folder_and_file_name)
+    content_style_tuple = fs.AccessImageInput(folder_and_file_name)
 
-    content_path = "../Images/sunflowers.jpeg"
-    style_path = "../Images/the-kiss.jpg"
-
-    plt.figure(figsize=(10, 10))
-
-    vi.DisplayContentAndStyleImage(content_path, style_path)
+    content_path = content_style_tuple[0]
+    style_path = content_style_tuple[1]
 
     # Content layer where will pull our feature maps
     content_layers = ['block5_conv2']
@@ -36,9 +40,16 @@ def main():
                     ]
 
     best_processed_art, best_loss = run_style_transfer(
-        content_path, style_path, content_layers, style_layers, num_iterations=650)
+        content_path, style_path, content_layers, style_layers, num_iterations=numIterations)
 
+    folder_and_file_name = fs.RenameResultFolderName(
+        folder_and_file_name, content_style_tuple)
+    content_path = "../Images/" + \
+        folder_and_file_name + "/" + content_style_tuple[2]['FileName']
+    style_path = "../Images/" + \
+        folder_and_file_name + "/" + content_style_tuple[3]['FileName']
     vi.show_results(best_processed_art, content_path, style_path)
+    fs.SaveResultFile(best_processed_art, folder_and_file_name, numIterations)
 
 
 def get_model(content_layers, style_layers):

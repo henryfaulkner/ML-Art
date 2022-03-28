@@ -16,6 +16,6 @@ setup(
         'numpy',
         'matplotlib',
         'pillow',
-        'IPython'
+        'requests'
     ]
 )
