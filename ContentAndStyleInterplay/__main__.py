@@ -20,7 +20,13 @@ mpl.rcParams['axes.grid'] = False
 def main():
     vi = VisualizeImages()
     fs = FileStructures()
-    numIterations = input('How many processing iterations?')
+
+    try:
+        numIterations = int(input('How many iterations of processing?\n'))
+    except:
+        print("Invalid input. Defaulting to 60 iterations.")
+        numIterations = 60
+
     folder_and_file_name = 'temp'  # fs.CreateFileInput()
     fs.CreateResultFolder(folder_and_file_name)
     content_style_tuple = fs.AccessImageInput(folder_and_file_name)
@@ -42,12 +48,14 @@ def main():
     best_processed_art, best_loss = run_style_transfer(
         content_path, style_path, content_layers, style_layers, num_iterations=numIterations)
 
-    folder_and_file_name = fs.RenameResultFolderName(
-        folder_and_file_name, content_style_tuple)
-    content_path = "../Images/" + \
-        folder_and_file_name + "/" + content_style_tuple[2]['FileName']
-    style_path = "../Images/" + \
-        folder_and_file_name + "/" + content_style_tuple[3]['FileName']
+    if(len(content_style_tuple) > 2):
+        folder_and_file_name = fs.RenameResultFolderName(
+            folder_and_file_name, content_style_tuple)
+        content_path = "../Images/" + \
+            folder_and_file_name + "/" + content_style_tuple[2]['FileName']
+        style_path = "../Images/" + \
+            folder_and_file_name + "/" + content_style_tuple[3]['FileName']
+
     vi.show_results(best_processed_art, content_path, style_path)
     fs.SaveResultFile(best_processed_art, folder_and_file_name, numIterations)
 
