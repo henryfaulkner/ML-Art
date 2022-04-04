@@ -43,6 +43,14 @@ class FileStructures:
 
         return
 
+    def RenameVideoIfManual(self, folder_and_file_name, content_style_tuple):
+        if(folder_and_file_name != "temp"):
+            return folder_and_file_name
+
+        content = content_style_tuple[2]['Title'].replace(' ', '_')
+        style = content_style_tuple[3]['Title'].replace(' ', '_')
+        return content + "+" + style
+
     def RenameResultFolderName(self, folder_and_file_name, content_style_tuple):
         curDir = os.path.join(os.getcwd(), "../Images/", folder_and_file_name)
 

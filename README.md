@@ -10,8 +10,10 @@ showcase the interplay of an image's content and its style.
 - pillow
 - tensorflow
 - requests
+- OpenCV
 
 $pip3 install tensorflow;
 pip3 install pillow;
 pip3 install matplotlib;
 pip3 install requests;
+pip3 install opencv-python;

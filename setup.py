@@ -1,6 +1,6 @@
 from setuptools import setup
 
-projectName = 'ContentAndStyleInterplay'
+projectName = 'NeuralStyleTransfer'
 
 setup(
     name=projectName,
@@ -16,6 +16,7 @@ setup(
         'numpy',
         'matplotlib',
         'pillow',
-        'requests'
+        'requests',
+        'opencv-python'
     ]
 )

@@ -3,6 +3,7 @@ from MachineLearningProcessor.PrepareData import PrepareData
 from MachineLearningProcessor.GradientDescent import GradientDescent
 from MetAPI.RESTCalls import RESTCalls
 from helpers.FileStructures import FileStructures
+from VideoProcessor.GenerateVideo import GenerateVideo
 from keras.preprocessing import image
 from keras import models
 import tensorflow as tf
@@ -22,10 +23,10 @@ def main():
     fs = FileStructures()
 
     try:
-        numIterations = int(input('How many iterations of processing?\n'))
+        num_iterations = int(input('How many iterations of processing?\n'))
     except:
         print("Invalid input. Defaulting to 60 iterations.")
-        numIterations = 60
+        num_iterations = 60
 
     folder_and_file_name = 'temp'  # fs.CreateFileInput()
     fs.CreateResultFolder(folder_and_file_name)
@@ -45,8 +46,8 @@ def main():
                     'block5_conv1'
                     ]
 
-    best_processed_art, best_loss = run_style_transfer(
-        content_path, style_path, content_layers, style_layers, num_iterations=numIterations)
+    best_processed_art, best_loss, imgs = run_style_transfer(
+        content_path, style_path, content_layers, style_layers, num_iterations=num_iterations)
 
     if(len(content_style_tuple) > 2):
         folder_and_file_name = fs.RenameResultFolderName(
@@ -56,8 +57,13 @@ def main():
         style_path = "../Images/" + \
             folder_and_file_name + "/" + content_style_tuple[3]['FileName']
 
+    gv = GenerateVideo()
+    gv.GenerateVideo(imgs, num_iterations, folder_and_file_name)
+    # fs.RenameVideoIfManual(
+    #     folder_and_file_name, content_style_tuple))
+
     vi.show_results(best_processed_art, content_path, style_path)
-    fs.SaveResultFile(best_processed_art, folder_and_file_name, numIterations)
+    fs.SaveResultFile(best_processed_art, folder_and_file_name, num_iterations)
 
 
 def get_model(content_layers, style_layers):
@@ -121,7 +127,7 @@ def run_style_transfer(content_path,
                        style_path,
                        content_layers,
                        style_layers,
-                       num_iterations=1000,
+                       num_iterations=300,
                        content_weight=1e3,
                        style_weight=1e-2):
     gd = GradientDescent()
@@ -149,8 +155,8 @@ def run_style_transfer(content_path,
     # For displaying intermediate images
     iter_count = 1
 
-    # Store our best result
-    best_loss, best_img = float('inf'), None
+    # Store our best result and all results
+    best_loss, best_img, imgs = float('inf'), None, [] * num_iterations
 
     # Create a nice config
     loss_weights = (style_weight, content_weight)
@@ -175,7 +181,6 @@ def run_style_transfer(content_path,
     min_vals = -norm_means
     max_vals = 255 - norm_means
 
-    imgs = []
     for i in range(num_iterations):
         grads, all_loss = gd.calc_gradients(cfg)
         loss, style_score, content_score = all_loss
@@ -183,6 +188,7 @@ def run_style_transfer(content_path,
         clipped = tf.clip_by_value(init_image, min_vals, max_vals)
         init_image.assign(clipped)
         end_time = time.time()
+        imgs.append(pd.deprocess_img(init_image.numpy()))
 
         if loss < best_loss:
             # Update best loss and best image from total loss.
@@ -199,13 +205,8 @@ def run_style_transfer(content_path,
                   'content loss: {:.4e}, '
                   'time: {:.4f}s'.format(loss, style_score, content_score, time.time() - start_time))
     print('Total time: {:.4f}s'.format(time.time() - global_start))
-    for i, img in enumerate(imgs):
-        plt.subplot(num_rows, num_cols, i+1)
-        plt.imshow(img)
-        plt.xticks([])
-        plt.yticks([])
 
-    return best_img, best_loss
+    return best_img, best_loss, imgs
 
 
 if __name__ == '__main__':
