@@ -1,3 +1,5 @@
+## Neural Style Transfer
+
 This is an experiment to examine image processing's ability to disect images to
 showcase the interplay of an image's content and its style.
 
